@@ -39,6 +39,11 @@ Before beginning, ensure you have:
    - Name Tag: AWS_SITE_VPC
    - IPv4 CIDR block: 10.1.0.0/16
    - Tenancy: Default
+  
+<img width="1366" height="768" alt="Screenshot (200)" src="https://github.com/user-attachments/assets/35e282b4-e384-4fd7-b761-00a54a13a223" />
+
+<img width="1366" height="768" alt="Screenshot (199)" src="https://github.com/user-attachments/assets/89baf672-9c92-4406-8b42-ca1e9b584d13" />
+
 3. Create a subnet in ap-south-1a:
    - Subnet Name: AWS_SITE_SUBNET
    - CIDR block: 10.1.0.0/24
