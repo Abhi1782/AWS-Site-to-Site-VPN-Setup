@@ -12,3 +12,22 @@ The goal is to enable:
 - ✅ Encrypted IPsec tunnels over the internet
 - ✅ Low-cost alternative to Direct Connect
 - ✅ High availability with dual tunnels
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+## 🧱 Architecture diagram
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+## 📌 Prerequisites
+
+Before beginning, ensure you have:
+
+- AWS Console access with IAM permissions to create VPCs, VPNs, gateways, route tables, and EC2 instances.
+- Two AWS regions enabled:
+   - ap-south-1 (Mumbai)
+   - us-east-1 (N. Virginia)
+- CIDR blocks planned that do not overlap (e.g., 10.1.0.0/16 and 10.2.0.0/16).
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
