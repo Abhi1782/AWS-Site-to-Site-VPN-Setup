@@ -131,4 +131,124 @@ A Customer Gateway represents the remote network endpoint:
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+## 8. Create Site-to-Site VPN Connection
 
+1. In VPC Console → Site-to-Site VPN Connections → Create.
+2. Name Tag: Mumbai-to-Virginia–VPN.
+3. Target Gateway: AWS_SITE_VPG.
+4. Customer Gateway: Customer_AWS_S2S.
+5. Routing: Static.
+6. Add your remote CIDR:
+   - 10.2.0.0/16 (us-east-1 VPC).
+7. Create.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+## 9. Download VPN Configuration
+
+1. In Site-to-Site VPN Connections, select the new VPN.
+2. Click Download Configuration and select your device/vendor.
+3. Save config for phase-1/phase-2 settings.
+4. Apply configuration to your Customer Gateway device (router/firewall).
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+## 10. Access EC2 Instance launched in (N.Virginia Region)
+
+### Install Libreswan
+
+1. Ubuntu/Debian
+   
+         sudo apt update
+         sudo apt install libreswan -y
+
+2. RHEL/CentOS/Amazon Linux
+
+         sudo yum install libreswan -y
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+## 11. Configure Libreswan
+
+🔹 Modify /etc/ipsec.conf:
+
+      vi /etc/ipsec.conf
+
+      include /etc/ipsec.d/*.conf
+
+🔹 Update /etc/sysctl.conf:
+
+Next Steps:
+
+🔹 vi /etc/sysctl.conf
+
+      net.ipv4.ip_forward = 1
+      net.ipv4.conf.all.accept_redirects = 0
+      net.ipv4.conf.all.send_redirects = 0
+
+🔹 Restart network service:
+
+      systemctl restart systemd-networkd
+
+🔹 Create/Edit /etc/ipsec.d/aws-vpn.conf:
+
+      conn Tunnel1
+        authby=secret
+        auto=start
+        left=%defaultroute # Assuming this is your local subnet, replace if needed
+        leftid=54.85.16.212
+        right=3.6.59.5
+        type=tunnel
+        ikelifetime=8h
+        keylife=1h
+        # Consider stronger options if supported by both sides:
+        # phase2alg=aes256-gcm-sha256
+        # ike=aes256-gcm-sha256
+        # keyingtries=%forever
+        keyexchange=ike
+        leftsubnet=10.2.0.0/16
+        rightsubnet=10.1.0.0/16
+        dpddelay=10
+        dpdtimeout=30
+        dpdaction=restart_by_peer
+
+ 🔹 Create/Edit /etc/ipsec.d/aws-vpn.secrets:
+
+       vi /etc/ipsec.d/aws-vpn.secrets
+
+      customer_public_ip aws_vgw_public_ip : PSK "shared secret"
+
+      54.85.16.212 3.6.59.5: PSK "6hCv4ZehxKhhfb8cNfC4z4NBicyod_W6"    
+
+🔹 Set Permissions
+         
+         sudo chmod 600 /etc/ipsec.secrets
+
+Next Steps:
+
+🔹 Start Libreswan Service:
+
+      chkconfig ipsec on
+      sudo systemctl start ipsec
+      sudo systemctl enable ipsec
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+## 12. Verify Tunnel Status on AWS Console
+
+
+## 13. Test Connectivity
+
+   - From Linux side
+
+         ping 10.1.0.10
+
+   - From AWS EC2
+ 
+         ping 10.2.0.10
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+   
